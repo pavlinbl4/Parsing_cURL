@@ -2,7 +2,7 @@ from check_cycle_limit import calculate_limit
 from tools.create_sub_directory import create_directory
 import requests
 from ksp_curl_old import cookies, headers, params
-from tqdm import tqdm, trange
+from tqdm import trange
 
 
 def kp_pagination():
@@ -13,15 +13,19 @@ def kp_pagination():
 
     print(f"Now {params['total']} images  on site,\n{pages_count} pages would be downloaded")
 
-    for i in trange(1, pages_count + 1):
-        params['pageprms.pagenum'] = i
+    if requests.get('https://photo.kommersant.ru/photo/user_photo_download', params=params,
+                    cookies=cookies,
+                    headers=headers).status_code == 200:
 
-        response = requests.get('https://photo.kommersant.ru/photo/user_photo_download', params=params,
-                                cookies=cookies,
-                                headers=headers)
+        for i in trange(1, pages_count + 1):
+            params['pageprms.pagenum'] = i
 
-        with open(f"{html_files_dir}/rezult_{i}.html", 'w') as html_file:
-            html_file.write(response.text)
+            response = requests.get('https://photo.kommersant.ru/photo/user_photo_download', params=params,
+                                    cookies=cookies,
+                                    headers=headers)
+
+            with open(f"{html_files_dir}/rezult_{i}.html", 'w') as html_file:
+                html_file.write(response.text)
 
 
 if __name__ == '__main__':
