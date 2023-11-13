@@ -1,9 +1,11 @@
-from image_downloader import download_jpeg_image
+from tools.image_downloader import download_jpeg_image
 from tools.files_work import find_files
+from tools.origanal_file_name import extract_image_name
 from tools.regex_tools import images_number_int
 from tools.soup import make_soup_from_offline_file
-from icecream import ic
-from tqdm import trange, tqdm
+from tqdm import tqdm
+
+from tools.u_xlsx_writer import universal_xlsx_writer
 
 
 def get_kommersant_data(offline_html, count: int) -> int:
@@ -20,7 +22,14 @@ def get_kommersant_data(offline_html, count: int) -> int:
             # print(sales_number)
             # print(image.find(class_="ps_mosaic__item_text").text)
             image_link = image.find('img', class_="ps_lenta__image").get('src')
-            download_jpeg_image(image_link, sales_number_int)
+            # download_jpeg_image(image_link, sales_number_int)
+            universal_xlsx_writer(['Sales', 'Image id'],
+                                  '/Volumes/big4photo/Documents/Kommersant/external_sales.xlsx',
+                                  "external_sales",
+                                  photographer=None, row_line=None,
+                                  column_number=None,
+                                  cell_data=None,
+                                  row_data=[str(sales_number_int), extract_image_name(image_link)], column_width=30)
     count += sales_on_one_file
     return count
 
