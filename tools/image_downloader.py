@@ -1,14 +1,15 @@
 import requests
 
-from image_name_with_sales_count import add_sales_count_to_image_name
-from origanal_file_name import extract_image_name
+
+
 from tools.create_sub_directory import create_directory
+from tools.image_name_with_sales_count import add_sales_count_to_image_name
+from tools.origanal_file_name import extract_image_name
 
 
 def download_jpeg_image(image_link, sales_count):
-
     # create folder for images in root
-    image_folder = create_directory(".", 'Images')
+    image_folder = create_directory("..", 'Images')
 
     # original file name from site
     image_name = extract_image_name(image_link)
