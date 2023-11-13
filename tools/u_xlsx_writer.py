@@ -95,5 +95,10 @@ if __name__ == '__main__':
                           file_path='/Users/evgeniy/Documents/test33.xlsx',
                           sheet_name=sheet_name_t,
                           row_data=list_data_t,
-                          column_width=(25,10, 11, 20, 44, 55, 66, 77, 88, 99, 10, 20, 30)
+                          column_width=30
+                          # row_line=7,
+                          # column_number=7,
+                          # cell_data='7x7'
 
+                          )
+    # def universal_xlsx_writer(columns_names, file_path, sheet_name, row_line, column_number, cell_data):
