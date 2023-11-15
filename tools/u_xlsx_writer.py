@@ -3,6 +3,7 @@ from pathlib import Path
 import string
 from openpyxl.styles import (
     Alignment, Font)
+from datetime import datetime
 
 
 #  set columns width in sheet header
@@ -43,6 +44,39 @@ def write_list_to_column(ws, column_data):
         cell.value = cell_value
 
 
+def check_sheet_name(sheet_name, workbook):
+    if sheet_name in workbook.sheetnames:
+        worksheet = workbook[sheet_name]
+    else:
+        print("Worksheet not found")
+        quit()
+    return worksheet
+
+
+def sum_column(worksheet, column_letter):
+    column = worksheet[column_letter]
+    return sum(cell.value for cell in column if cell.value)
+
+
+def write_sum_to_selected_column(file_path: str, sheet_name:str, column_number: int):
+    workbook = openpyxl.load_workbook(file_path, read_only=False)
+
+    worksheet = check_sheet_name(sheet_name, workbook)
+
+    last_line = worksheet.max_row
+
+    # Get the column cells to sum
+    column_cells = list(worksheet.columns)[column_number - 1]
+
+    cell = worksheet.cell(row=last_line + 1, column=column_number)
+
+    worksheet.cell(row=last_line + 1, column=column_number).alignment = Alignment(wrap_text=True, horizontal='center')
+
+    cell.value = sum(int(cell.value) for cell in column_cells if cell.value is not None and cell.value != 'Sales')
+
+    workbook.save(file_path)
+
+
 def write_to_cell(ws, row_line, column_number, cell_data, photographer):
     cell = ws.cell(row=row_line + 1, column=1)
     cell.value = photographer
@@ -81,24 +115,5 @@ def universal_xlsx_writer(columns_names, file_path, sheet_name, photographer=Non
 
 
 if __name__ == '__main__':
-    columns_n = (
-        'Name', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
-        'November', 'December')
-    # row_data_t = 'column 11 date'
-    list_data_t = [44, 74444, 33, 7777]  # only for writing by rows
-    sheet_name_t = '2'
-    # column_number_t = 2
-    # cell_data_t = 'gjksgeggjw'
-
-    universal_xlsx_writer(photographer=None,
-                          columns_names=columns_n,
-                          file_path='/Users/evgeniy/Documents/test33.xlsx',
-                          sheet_name=sheet_name_t,
-                          row_data=list_data_t,
-                          column_width=30
-                          # row_line=7,
-                          # column_number=7,
-                          # cell_data='7x7'
-
-                          )
-    # def universal_xlsx_writer(columns_names, file_path, sheet_name, row_line, column_number, cell_data):
+    write_sum_to_selected_column('/Volumes/big4photo/Documents/Kommersant/external_sales.xlsx',
+                                 '14.11.2023', 1)
