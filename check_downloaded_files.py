@@ -5,7 +5,7 @@ from tools.regex_tools import images_number_int
 from tools.soup import make_soup_from_offline_file
 from tqdm import tqdm
 
-from tools.u_xlsx_writer import universal_xlsx_writer
+from tools.u_xlsx_writer import universal_xlsx_writer, write_sum_to_selected_column
 from datetime import datetime
 
 
@@ -20,7 +20,7 @@ def get_kommersant_data(offline_html, count: int) -> int:
             sales_number_int = images_number_int(sales_number, pattern=r'(?<=продаж:\s)\d+')
             if sales_number_int != 0:
                 sales_on_one_file += sales_number_int
-                count += sales_number_int
+                # count += sales_number_int
                 # print(sales_number)
                 # print(image.find(class_="ps_mosaic__item_text").text)
                 image_link = image.find('img', class_="ps_lenta__image").get('src')
@@ -32,6 +32,7 @@ def get_kommersant_data(offline_html, count: int) -> int:
                                       column_number=None,
                                       cell_data=None,
                                       row_data=[str(sales_number_int), extract_image_name(image_link), image_link], column_width=30)
+
         count += sales_on_one_file
     except IndexError as ex:
         print(ex, offline_html)
@@ -43,7 +44,10 @@ def main_check_downloaded_files(dir_path: str):
     count = 0
     for number, file in tqdm(enumerate(all_html_files, start=1)):
         count = get_kommersant_data(f'{dir_path}/rezult_{number}.html', count)
-        print(f'rezult_{number}.html')
+
+
+    write_sum_to_selected_column('/Volumes/big4photo/Documents/Kommersant/external_sales.xlsx',
+                                 datetime.today().strftime("%d.%m.%Y"))
     print(f'Sales on all pages{count = }')
 
 
